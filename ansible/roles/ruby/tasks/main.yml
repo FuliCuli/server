@@ -1,0 +1,6 @@
+---
+
+- name: Install ruby
+  apt: name=ruby state=latest update_cache=true
+  tags:
+    - ruby
