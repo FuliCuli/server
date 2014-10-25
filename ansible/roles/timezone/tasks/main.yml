@@ -1,0 +1,6 @@
+---
+
+- name: Set time zone
+  command: ln -sf /usr/share/zoneinfo/{{ timezone }} /etc/localtime
+  tags:
+    - timezone

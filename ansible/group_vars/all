@@ -1,0 +1,17 @@
+---
+
+httpd_port: 80
+httpd_ssl_port: 443
+
+ntp_servers:
+  - "0.fr.pool.ntp.org"
+  - "1.fr.pool.ntp.org"
+  - "2.fr.pool.ntp.org"
+  - "3.fr.pool.ntp.org"
+
+ntp_fallback: ntp.ubuntu.com
+
+timezone: Europe/Paris
+
+nginx_worker_connections: 768
+nginx_worker_processes: 1

@@ -1,0 +1,39 @@
+#!/bin/bash
+#
+
+if [ ! -x /sbin/iptables ]; then
+	exit 0
+fi
+ 
+start()
+{
+	/sbin/iptables-restore < /etc/iptables.rules
+}
+
+clearall()
+{
+	iptables -F
+	iptables -X
+	iptables -t nat -F
+	iptables -t nat -X
+	iptables -t mangle -F
+	iptables -t mangle -X
+	iptables -P INPUT ACCEPT
+	iptables -P OUTPUT ACCEPT
+	iptables -P FORWARD ACCEPT
+}
+
+
+case "$1" in 
+	restart|start)
+		start
+		;;
+	stop)
+ 		clearall
+ 		;;
+ 	*)
+ 		echo "Usage: $0 {start|stop|restart}"
+ 		exit 1
+	esac
+ 
+exit 0

@@ -1,0 +1,33 @@
+---
+
+- name: Init rules
+  copy: src=rules dest=/etc/iptables.rules
+  tags:
+    - firewall
+    - iptables
+
+- name: Init firewall
+  copy: src=firewall dest=/etc/init.d/firewall
+  tags:
+    - firewall
+    - iptables
+
+- name: Make it executable
+  command: chmod +x /etc/init.d/firewall
+  tags:
+    - firewall
+    - iptables
+  notify:
+    - restart firewall
+
+- name: Start iptables rules on boot
+  copy: src=bootstrap dest=/etc/network/if-pre-up.d/iptables
+  tags:
+    - firewall
+    - iptables
+
+- name: Make it executable
+  command: chmod +x /etc/network/if-pre-up.d/iptables
+  tags:
+    - firewall
+    - iptables

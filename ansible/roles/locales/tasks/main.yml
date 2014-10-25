@@ -1,0 +1,11 @@
+---
+
+- name: Generate locales
+  command: locale-gen en_US en_US.UTF-8
+  tags:
+    - locales
+
+- name: Reconfigure locales
+  command: dpkg-reconfigure locales
+  tags:
+    - locales

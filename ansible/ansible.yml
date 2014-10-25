@@ -1,0 +1,10 @@
+---
+# This playbook update ansible to the latest version.
+
+- name: Execute ansible playbook
+  hosts: all
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - ansible

@@ -1,0 +1,11 @@
+---
+# Keep ansible up to date
+
+- name: Install ansible required packages
+  apt: name=software-software-properties state=latest update_cache=yes
+
+- name: Add ansible repository
+  apt_repository: repo='ppa:ansible/ansible'
+
+- name: Install ansible package
+  apt: name=ansible state=latest update_cache=yes

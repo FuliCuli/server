@@ -1,0 +1,21 @@
+---
+
+- name: Create needed directory
+  command: mkdir /var/cache/logwatch
+  args:
+    creates: /var/cache/logwatch
+  tags:
+    - firewall
+    - logwtach
+
+- name: Install logwatch
+  apt: name=logwatch state=latest update_cache=true
+  tags:
+    - firewall
+    - logwtach
+
+- name: Copy default conf
+  copy: src=/usr/share/logwatch/default.conf/logwatch.conf dest=/etc/logwatch/conf/logwatch.conf
+  tags:
+    - firewall
+    - logwtach

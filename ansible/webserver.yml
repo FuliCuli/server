@@ -1,0 +1,12 @@
+---
+
+- include: common.yml
+
+- name: Install webserver
+  hosts: webserver
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - php
+    - nginx

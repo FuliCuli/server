@@ -1,0 +1,49 @@
+---
+
+- name: Install php-fpm
+  apt: name=php5-fpm state=latest update_cache=true
+  tags:
+    - webserver
+    - php
+    - php-fpm
+
+- name: Install php-cli
+  apt: name=php5-cli state=latest update_cache=true
+  tags:
+    - webserver
+    - php
+    - php-cli
+
+- name: Remove php-cli configuration
+  command: mv /etc/php5/cli/php.ini /etc/php5/cli/php.ini.basic
+  args:
+    removes: /etc/php5/cli/php.ini
+  tags:
+    - webserver
+    - php
+    - php-cli
+
+- name: Link php-cli to php-fpm configuration
+  command: ln -s /etc/php5/fpm/php.ini /etc/php5/cli/php.ini
+  args:
+    creates: /etc/php5/cli/php.ini
+  tags:
+    - webserver
+    - php
+    - php-cli
+
+- name: Check if nginx is installed
+  stat: path=/etc/nginx/conf.d
+  register: nginx
+  tags:
+    - webserver
+    - php
+    - php-fpm
+
+- name: Configure nginx
+  copy: src=nginx.conf dest=/etc/nginx/conf.d/php-fpm.conf force=no
+  when: nginx.stat.exists
+  tags:
+    - webserver
+    - php
+    - php-fpm

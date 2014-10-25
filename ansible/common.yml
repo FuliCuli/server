@@ -1,0 +1,28 @@
+---
+
+- name: Configure locales
+  hosts: all
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - locales
+
+- name: Configure firewall
+  hosts: all
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - iptables
+    - fail2ban
+    - logwatch
+
+- name: Time synchronization
+  hosts: all
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - ntp
+    - timezone

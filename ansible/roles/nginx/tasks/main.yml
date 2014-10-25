@@ -1,0 +1,38 @@
+---
+
+- name: Install nginx
+  apt: name=nginx state=latest update_cache=true
+  tags:
+    - webserver
+    - nginx
+
+# - name: Create needed directories
+#   command: mkdir /etc/nginx/{{ item }}
+#   args:
+#     creates: /etc/nginx/{{ item }}
+#   with_items:
+#     - upstreams
+#     - locations
+#   tags:
+#     - webserver
+#     - nginx
+
+- name: Update nginx configuration
+  copy: src=fuliculi.conf dest=/etc/nginx/conf.d/fuliculi.conf
+  tags:
+    - webserver
+    - nginx
+
+- name: Define new default index file
+  copy: src=default.html dest=/usr/share/nginx/html/index.html
+  tags:
+    - webserver
+    - nginx
+
+- name: insert iptables rule for httpd
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ httpd_port }}' insertbefore='COMMIT' line='-A INPUT -p tcp --dport {{ httpd_port }} -j ACCEPT'"
+  tags:
+    - webserver
+    - nginx
+    - firewall
+  notify: restart firewall
