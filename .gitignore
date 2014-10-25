@@ -1,0 +1,27 @@
+# IDE files
+.buildpath
+.project
+.settings
+.idea
+nbproject/
+*.sublime-*
+
+# VM
+.vagrant
+
+# Log files
+*.log
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Variables
+ansible/host_vars/*
+!ansible/host_vars/*.dist
+!ansible/host_vars/localhost
