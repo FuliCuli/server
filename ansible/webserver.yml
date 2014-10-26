@@ -10,3 +10,4 @@
   roles:
     - php
     - nginx
+    - samba

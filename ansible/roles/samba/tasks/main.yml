@@ -1,0 +1,46 @@
+---
+
+- fail: msg="Samba should not be installed in production environnement."
+  when: env != "dev"
+
+- name: Install samba package
+  apt: name=samba state=latest update_cache=true
+  tags: 
+    - samba
+
+- name: Apply configuration
+  template: src=smb.conf.j2 dest=/etc/samba/smb.conf
+  tags: 
+    - samba
+  notify: restart samba
+
+- name: Add vagrant user
+  shell: "(echo vagrant; echo vagrant) | smbpasswd -L -s -a vagrant"
+  tags: 
+    - samba
+  notify: restart samba
+
+- name: Setup user right
+  file: path={{ web_directory }} state=directory owner=vagrant group=vagrant recurse=yes mode=0777
+  tags: 
+    - samba
+  notify: restart samba
+
+- name: Insert iptables rules
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ item.port }}' insertafter='# CUSTOM RULES HERE' line='-A {{ item.type }} -p {{ item.protocol }} --dport {{ item.port }} -j ACCEPT'"
+  with_items:
+    - { type: 'INPUT', port: '135', protocol: 'tcp' }
+    - { type: 'OUTPUT', port: '135', protocol: 'tcp' }
+    - { type: 'INPUT', port: '137', protocol: 'udp' }
+    - { type: 'OUTPUT', port: '137', protocol: 'udp' }
+    - { type: 'INPUT', port: '138', protocol: 'udp' }
+    - { type: 'OUTPUT', port: '138', protocol: 'udp' }
+    - { type: 'INPUT', port: '139', protocol: 'tcp' }
+    - { type: 'OUTPUT', port: '139', protocol: 'tcp' }
+    - { type: 'INPUT', port: '445', protocol: 'tcp' }
+    - { type: 'INPUT', port: '445', protocol: 'udp' }
+    - { type: 'OUTPUT', port: '445', protocol: 'tcp' }
+  tags:
+    - samba
+    - firewall
+  notify: restart firewall
