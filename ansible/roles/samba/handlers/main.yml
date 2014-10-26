@@ -1,0 +1,9 @@
+---
+
+- include: ../../iptables/handlers/main.yml
+
+- name: restart samba
+  service: name={{ item }} state=restarted
+  with_items:
+    - nmbd
+    - smbd

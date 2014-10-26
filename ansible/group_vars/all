@@ -1,5 +1,7 @@
 ---
 
+env: prod
+
 httpd_port: 80
 httpd_ssl_port: 443
 
@@ -15,3 +17,5 @@ timezone: Europe/Paris
 
 nginx_worker_connections: 768
 nginx_worker_processes: 1
+
+web_directory: /var/www/
