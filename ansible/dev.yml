@@ -1,5 +1,6 @@
 ---
 
+- include: database.yml
 - include: webserver.yml
 
 - name: Install dev environment

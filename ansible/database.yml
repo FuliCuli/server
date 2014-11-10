@@ -1,0 +1,11 @@
+---
+
+- include: common.yml
+
+- name: Install databases
+  hosts: database
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - mariadb
