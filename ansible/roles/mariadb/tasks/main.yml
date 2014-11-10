@@ -64,3 +64,19 @@
   mysql_db: name=test state=absent
   tags:
     - mariadb
+
+- name: insert iptables rule
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ db_port }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ db_port }} -j ACCEPT'"
+  when: db_open_port
+  notify: restart firewall
+  tags:
+    - mariadb
+    - firewall
+
+- name: mariadb iptables rule close port
+  lineinfile: dest=/etc/iptables.rules state=absent regexp='{{ db_port }}' insertafter='# CUSTOM RULES HERE'
+  when: db_open_port != true
+  notify: restart firewall
+  tags:
+    - mariadb
+    - firewall
