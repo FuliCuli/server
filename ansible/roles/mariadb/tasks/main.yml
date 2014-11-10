@@ -62,5 +62,5 @@
 
 - name: Ensure test database is removed
   mysql_db: name=test state=absent
-#   tags:
-#     - mariadb
+  tags:
+    - mariadb
