@@ -26,3 +26,11 @@
   roles:
     - ntp
     - timezone
+
+- name: Source control management
+  hosts: all
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - git
