@@ -34,3 +34,11 @@
 
   roles:
     - git
+
+- name: Password management
+  hosts: all
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - pwgen
