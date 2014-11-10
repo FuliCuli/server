@@ -1,0 +1,6 @@
+---
+
+- name: Install pwgen
+  apt: name=pwgen state=latest update_cache=true
+  tags:
+    - pwgen
