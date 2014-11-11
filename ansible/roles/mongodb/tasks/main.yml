@@ -1,0 +1,38 @@
+---
+
+- name: Add mongodb key
+  command: apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
+  tags:
+    - mongodb
+
+- name: Add mongodb repository
+  apt_repository: repo='deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' update_cache=yes
+  tags:
+    - mongodb
+
+- name: Install mongodb
+  apt: pkg=mongodb-org state=latest update_cache=yes
+  sudo: yes
+  tags:
+    - mongodb
+
+- name: Start mongodb service
+  service: name=mongod state=started enabled=yes
+  tags:
+    - mongodb
+
+- name: insert iptables input rule
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ mongodb_port }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ mongodb_port }} -m state --state NEW,ESTABLISHED -j ACCEPT'"
+  when: db_open_port
+  notify: restart firewall
+  tags:
+    - mongodb
+    - firewall
+
+- name: insert iptables output rule
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ mongodb_port }}' insertafter='# CUSTOM RULES HERE' line='-A OUTPUT -p tcp --source-port {{ mongodb_port }} -m state --state ESTABLISHED -j ACCEPT'"
+  when: db_open_port
+  notify: restart firewall
+  tags:
+    - mongodb
+    - firewall
