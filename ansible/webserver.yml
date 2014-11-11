@@ -11,4 +11,12 @@
     - php
     - nginx
     - rabbitmq
+
+- name: Tools to build applications
+  hosts: webserver
+  user: vagrant
+  sudo: yes
+
+  roles:
     - nodejs
+    - grunt
