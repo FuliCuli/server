@@ -1,0 +1,6 @@
+---
+
+- include: ../../iptables/handlers/main.yml
+
+- name: restart rabbitmq
+  service: name=rabbitmq-server state=restarted

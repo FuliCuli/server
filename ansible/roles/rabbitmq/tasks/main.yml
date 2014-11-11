@@ -1,0 +1,58 @@
+---
+
+- name: Add rabbitmq key
+  apt_key: url=http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+  tags:
+    - rabbitmq
+
+- name: Add rabbitmq repository
+  apt_repository: repo='deb http://www.rabbitmq.com/debian/ testing main' update_cache=yes
+  tags:
+    - rabbitmq
+
+- name: Install rabbitmq
+  apt: pkg=rabbitmq-server state=latest update_cache=yes
+  sudo: yes
+  tags:
+    - rabbitmq
+
+- name: Start rabbitmq service
+  service: name=rabbitmq-server state=started enabled=yes
+  tags:
+    - rabbitmq
+
+- name: Add rabbitmq_management plugin
+  rabbitmq_plugin: names=rabbitmq_management
+  notify: restart rabbitmq
+  tags:
+    - rabbitmq
+
+- name: Create a root password
+  shell: echo $(pwgen -Bs 20 1)
+  register: rabbitmq_root_password
+  tags:
+    - rabbitmq
+
+- name: Register the root password into the file /root/.rabbitmq_user
+  template: src=.rabbitmq_user.j2 dest=/root/.rabbitmq_user owner=root mode=0600
+  tags:
+    - rabbitmq
+
+- name: Add admin user for RabbitMQ
+  rabbitmq_user: user=admin password={{ rabbitmq_root_password.stdout }} force=yes vhost=/ configure_priv=.* read_priv=.* write_priv=.* state=present tags=administrator
+  notify: restart rabbitmq
+  tags:
+    - rabbitmq
+
+- name: Remove Guest user
+  rabbitmq_user: user=guest state=absent
+  notify: restart rabbitmq
+  tags:
+    - rabbitmq
+
+- name: Insert iptables rule for rabbitmq management
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='15672' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport 15672 -j ACCEPT'"
+  tags:
+    - rabbitmq
+    - firewall
+  notify: restart firewall
