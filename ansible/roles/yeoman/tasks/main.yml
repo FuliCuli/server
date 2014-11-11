@@ -1,0 +1,6 @@
+---
+
+- name: Install yeoman
+  npm: name=yo global=yes
+  tags:
+    - yeoman
