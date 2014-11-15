@@ -1,0 +1,6 @@
+---
+
+# Variables : hostname, ssl, git, version|default(master), web_dir|default(web)
+websites:
+  - { hostname: fuliculi.com, ssl: true, git: https://github.com/FuliCuli/fuliculi.git }
+  - { hostname: api.fuliculi.com, ssl: true, git: https://github.com/FuliCuli/api.git }

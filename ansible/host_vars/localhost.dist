@@ -1,0 +1,9 @@
+---
+
+env: dev
+
+db_open_port: true
+
+websites:
+  - { hostname: fuliculi.dev, git: https://github.com/FuliCuli/fuliculi.git }
+  - { hostname: api.dev, git: https://github.com/FuliCuli/api.git }
