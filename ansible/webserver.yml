@@ -12,6 +12,15 @@
     - nginx
     - rabbitmq
 
+- name: Install elasticsearch
+  hosts: webserver
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - java
+    - elasticsearch
+
 - name: Tools to build applications
   hosts: webserver
   user: vagrant
