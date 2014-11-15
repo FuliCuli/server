@@ -1,0 +1,36 @@
+server {
+    server_name  www.{{ item.hostname }};
+    rewrite ^(.*) http://{{ item.hostname }}$1 permanent;
+}
+
+server {
+        listen {% if item.ssl %}443{% else %}80{% endif %};
+        server_name {{ item.hostname }};
+                root   /var/www/{{ item.hostname }}/{{ item.web_dir | default('web') }};
+                index index.php;
+        include /etc/nginx/security;
+
+        # Logging
+        {% if env != 'prod' %}
+        access_log  /var/log/nginx/{{ item.hostname }}.access.log;
+        error_log  /var/log/nginx/{{ item.hostname }}.error.log debug;
+        {% else %}
+        access_log  /var/log/nginx/access.log;
+        error_log  /var/log/nginx/error.log warn;
+        {% endif %}
+
+        # serve static files directly
+        location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt)$ {
+            {% if env == 'prod' %}
+            access_log        off;
+            expires           max;
+            {% endif %}
+        }
+ 
+        location ~ \.php$ {
+        try_files $uri =404;
+                fastcgi_pass unix:/var/run/php5-fpm/{{ item.hostname }}.socket;
+                fastcgi_index index.php;
+                include /etc/nginx/fastcgi_params;
+        }
+}

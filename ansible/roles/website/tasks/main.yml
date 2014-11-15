@@ -1,0 +1,51 @@
+---
+
+- name: Add nginx host file
+  templates: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.hostname }}.conf user=root mode=644
+  with_items: websites
+  notify: restart nginx
+  tags:
+    - website
+
+- name: Add php-fpm pool file
+  templates: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ item.hostname }}.conf user=root mode=644
+  with_items: websites
+  notify: restart php-fpm
+  tags:
+    - website
+
+- name: Clone repository
+  git: repo={{ item.git }} dest=/var/www/{{ item.hostname }} version={{ item.version | default('master') }} update=yes accept_hostkey=yes
+  with_items: websites
+  when: item.git
+  tags:
+    - website
+    - deploy
+
+- name: Launch composer dependencies
+  command: cd /var/www/{{ item.hostname }}/ && [ -e "composer.json" ] && composer install -o || echo "No dependencies found."
+  with_items: websites
+  tags:
+    - website
+    - deploy
+
+- name: Install npm dependencies
+  command: cd /var/www/{{ item.hostname }}/ && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
+  with_items: websites
+  tags:
+    - website
+    - deploy
+
+- name: Install bower dependencies
+  command: cd /var/www/{{ item.hostname }}/ && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
+  with_items: websites
+  tags:
+    - website
+    - deploy
+
+- name: Execute grunt file
+  command: cd /var/www/{{ item.hostname }}/ && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
+  with_items: websites
+  tags:
+    - website
+    - deploy

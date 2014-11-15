@@ -1,3 +1,6 @@
 ---
 
 - include: ../../iptables/handlers/main.yml
+
+- name: restart nginx
+  command: /etc/init.d/nginx restart

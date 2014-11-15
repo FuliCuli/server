@@ -2,12 +2,3 @@
 
 - include: database.yml
 - include: webserver.yml
-
-- name: Install dev environment
-  hosts: all
-  user: vagrant
-  sudo: yes
-
-  roles:
-    - samba
-    - yeoman

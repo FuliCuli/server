@@ -11,6 +11,8 @@
     - php
     - nginx
     - rabbitmq
+    - { role: samba, when: "env == 'dev'" }
+    - website
 
 - name: Install elasticsearch
   hosts: webserver
@@ -30,3 +32,4 @@
     - nodejs
     - grunt
     - bower
+    - { role: yeoman, when: "env == 'dev'" }
