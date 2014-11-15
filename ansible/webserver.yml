@@ -29,6 +29,7 @@
   sudo: yes
 
   roles:
+    - composer
     - nodejs
     - grunt
     - bower
