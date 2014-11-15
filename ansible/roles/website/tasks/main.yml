@@ -1,14 +1,14 @@
 ---
 
 - name: Add nginx host file
-  templates: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.hostname }}.conf user=root mode=644
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.hostname }}.conf user=root mode=644
   with_items: websites
   notify: restart nginx
   tags:
     - website
 
 - name: Add php-fpm pool file
-  templates: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ item.hostname }}.conf user=root mode=644
+  template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ item.hostname }}.conf user=root mode=644
   with_items: websites
   notify: restart php-fpm
   tags:
