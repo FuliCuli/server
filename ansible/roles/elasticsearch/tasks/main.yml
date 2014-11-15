@@ -1,0 +1,16 @@
+---
+
+- name: Download deb file
+  get_url: url=https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.7.deb dest=/tmp/elasticsearch-0.90.7.deb
+  tags:
+    - elasticsearch
+
+- name: Install package
+  apt: deb=/tmp/elasticsearch-0.90.7.deb
+  tags:
+    - elasticsearch
+
+- name: Start elasticsearch
+  service: name=elasticsearch state=started enabled=yes
+  tags:
+    - elasticsearch

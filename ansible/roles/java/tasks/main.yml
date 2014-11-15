@@ -1,0 +1,16 @@
+---
+
+- name: Add oracle repository
+  apt_repository: repo='ppa:webupd8team/java' update_cache=yes
+  tags:
+    - java
+
+- name: Autoaccept license for Java
+  action: shell echo oracle-java7-installer shared/accepted-oracle-license-v1-1 select true | sudo /usr/bin/debconf-set-selections
+  tags:
+    - java
+
+- name: Install oracle package
+  apt: name=oracle-java7-installer state=latest update_cache=yes
+  tags:
+    - java
