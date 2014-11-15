@@ -42,3 +42,11 @@
 
   roles:
     - pwgen
+
+- name: Tools management
+  hosts: all
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - supervisor

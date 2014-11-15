@@ -1,0 +1,13 @@
+---
+
+- name: Install supervisor
+  apt: name=supervisor state=latest update_cache=yes
+  tags: 
+    - supervisor
+
+- name: Start supervisor
+  service: name=supervisor state=started enabled=yes
+  tags:
+    - supervisor
+
+
