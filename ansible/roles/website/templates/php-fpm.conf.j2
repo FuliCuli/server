@@ -1,14 +1,15 @@
-[{{ item.hostname }}]
+[{{ item.domain }}]
 
-listen = /var/run/php5-fpm/{{ item.hostname }}.socket
+listen = /var/run/php5-fpm/{{ item.domain }}.socket
 listen.backlog = -1
 listen.owner = nginx
 listen.group = www-data
 listen.mode=0660
 
 ; Unix user/group of processes
-user = {% if env == 'dev' %}vagrant{% else %}www-data{% endif %}
 group = www-data
+user = {% if env == 'dev' %}vagrant{% else %}www-data{% endif %}
+
 
 ; Choose how the process manager will control the number of child processes.
 pm = dynamic

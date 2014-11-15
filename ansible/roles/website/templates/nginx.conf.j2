@@ -1,19 +1,19 @@
 server {
-    server_name  www.{{ item.hostname }};
-    rewrite ^(.*) http://{{ item.hostname }}$1 permanent;
+    server_name  www.{{ item.domain }};
+    rewrite ^(.*) http://{{ item.domain }}$1 permanent;
 }
 
 server {
-        listen {% if item.ssl %}443{% else %}80{% endif %};
-        server_name {{ item.hostname }};
-                root   /var/www/{{ item.hostname }}/{{ item.web_dir | default('web') }};
+        listen {% if item.ssl is defined %}443{% else %}80{% endif %};
+        server_name {{ item.domain }};
+                root   /var/www/{{ item.domain }}/{{ item.web_dir | default('web') }};
                 index index.php;
         include /etc/nginx/security;
 
         # Logging
         {% if env != 'prod' %}
-        access_log  /var/log/nginx/{{ item.hostname }}.access.log;
-        error_log  /var/log/nginx/{{ item.hostname }}.error.log debug;
+        access_log  /var/log/nginx/{{ item.domain }}.access.log;
+        error_log  /var/log/nginx/{{ item.domain }}.error.log debug;
         {% else %}
         access_log  /var/log/nginx/access.log;
         error_log  /var/log/nginx/error.log warn;
@@ -29,7 +29,7 @@ server {
  
         location ~ \.php$ {
         try_files $uri =404;
-                fastcgi_pass unix:/var/run/php5-fpm/{{ item.hostname }}.socket;
+                fastcgi_pass unix:/var/run/php5-fpm/{{ item.domain }}.socket;
                 fastcgi_index index.php;
                 include /etc/nginx/fastcgi_params;
         }
