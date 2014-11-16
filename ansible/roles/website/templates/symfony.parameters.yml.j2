@@ -1,0 +1,7 @@
+parameters:
+{% for key,value in item.params.items() %}
+    {% if key != 'secret' %}{{ key }}: {{ value|default('~') }}{% endif %}
+
+{% endfor %}
+
+    secret: {{ symfony_secret_token.stdout }}

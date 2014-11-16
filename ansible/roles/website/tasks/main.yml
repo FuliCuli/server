@@ -57,6 +57,12 @@
     - website
     - deploy
 
+- include: symfony.yml
+  tags:
+    - website
+    - deploy
+    - symfony
+
 - name: Apply good rights for dev environment
   shell: cd /var/www/ && chmod -R 775 {{ item.domain }}/ && chown -R vagrant:www-data {{ item.domain }}/
   with_items: websites
