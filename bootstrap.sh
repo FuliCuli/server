@@ -7,4 +7,4 @@ apt-add-repository ppa:ansible/ansible
 apt-get update
 apt-get install ansible -y
 cd /home/ansible
-ansible-playbook -i hosts_dev webserver.yml --connection=local
+ansible-playbook -i hosts_dev dev.yml --connection=local
