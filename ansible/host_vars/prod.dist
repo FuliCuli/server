@@ -1,6 +1,6 @@
 ---
 
-# Variables : domain, ssl, git, version|default(master), web_dir|default(web)
+# Variables : domain, ssl, type, git, version|default(master), web_dir|default(web), params
 websites:
   - { domain: fuliculi.com, ssl: true, git: "https://github.com/FuliCuli/fuliculi.git" }
   - { 
