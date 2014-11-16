@@ -25,15 +25,16 @@
     - deploy
 
 - name: Launch composer dependencies
-  command: cd /var/www/{{ item.domain }}/ && [ -e "composer.json" ] && composer install -o || echo "No dependencies found."
+  shell: cd /var/www/{{ item.domain }}/ && [ -e "composer.json" ] && composer install -o -q || echo "No dependencies found."
   with_items: websites
   when: domain is not defined or domain == item.domain
+  sudo: yes
   tags:
     - website
     - deploy
 
 - name: Install npm dependencies
-  command: cd /var/www/{{ item.domain }}/ && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
+  shell: cd /var/www/{{ item.domain }}/ && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
   with_items: websites
   when: domain is not defined or domain == item.domain
   tags:
@@ -41,7 +42,7 @@
     - deploy
 
 - name: Install bower dependencies
-  command: cd /var/www/{{ item.domain }}/ && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
+  shell: cd /var/www/{{ item.domain }}/ && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
   with_items: websites
   when: domain is not defined or domain == item.domain
   tags:
@@ -49,23 +50,23 @@
     - deploy
 
 - name: Execute grunt files
-  command: cd /var/www/{{ item.domain }}/ && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
+  shell: cd /var/www/{{ item.domain }}/ && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
   with_items: websites
   when: domain is not defined or domain == item.domain
   tags:
     - website
     - deploy
 
-- name: Apply good rights
-  command: cd /var/www/ && chmod -R 775 {{ item.domain }}/ && chown -R vagrant:www-data {{ item.domain }}/
+- name: Apply good rights for dev environment
+  shell: cd /var/www/ && chmod -R 775 {{ item.domain }}/ && chown -R vagrant:www-data {{ item.domain }}/
   with_items: websites
   when: env == 'dev' and (domain is not defined or domain == item.domain)
   tags:
     - website
     - deploy
 
-- name: Apply good rights
-  command: cd /var/www/ && chmod -R 775 {{ item.domain }}/ && chown -R vagrant:www-data {{ item.domain }}/
+- name: Apply good rights for others environments
+  shell: cd /var/www/ && chmod -R 775 {{ item.domain }}/ && chown -R vagrant:www-data {{ item.domain }}/
   with_items: websites
   when: env != 'dev' and (domain is not defined or domain == item.domain)
   tags:
