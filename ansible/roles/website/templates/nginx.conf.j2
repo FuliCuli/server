@@ -7,8 +7,7 @@ server {
         listen {% if item.ssl is defined %}443{% else %}80{% endif %};
         server_name {{ item.domain }};
                 root   /var/www/{{ item.domain }}/{{ item.web_dir | default('web') }};
-                index index.php;
-        include /etc/nginx/security;
+                index {% if item.type|default(null) == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
 
         # Logging
         {% if env != 'prod' %}
