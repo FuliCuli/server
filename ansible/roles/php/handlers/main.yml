@@ -1,4 +1,4 @@
 ---
 
 - name: restart php-fpm
-  command: /etc/init.d/php-fpm restart
+  command: service php5-fpm restart
