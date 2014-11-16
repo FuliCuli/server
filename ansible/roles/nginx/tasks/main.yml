@@ -1,21 +1,25 @@
 ---
 
+- name: Add nginx key
+  apt_key: url=http://nginx.org/keys/nginx_signing.key state=present
+  tags:
+    - nginx
+
+- name: Add nginx repository
+  apt_repository: repo='deb http://nginx.org/packages/ubuntu trusty nginx'
+  tags:
+    - nginx
+
+- name: Add nginx repository
+  apt_repository: repo='deb-src http://nginx.org/packages/ubuntu trusty nginx' update_cache=yes
+  tags:
+    - nginx
+
 - name: Install nginx
   apt: name=nginx state=latest update_cache=true
   tags:
     - webserver
     - nginx
-
-# - name: Create needed directories
-#   command: mkdir /etc/nginx/{{ item }}
-#   args:
-#     creates: /etc/nginx/{{ item }}
-#   with_items:
-#     - upstreams
-#     - locations
-#   tags:
-#     - webserver
-#     - nginx
 
 - name: Update nginx configuration
   copy: src=fuliculi.conf dest=/etc/nginx/conf.d/fuliculi.conf
