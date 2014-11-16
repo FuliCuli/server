@@ -3,6 +3,7 @@
 - name: Add nginx host files
   template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.domain }}.conf owner=root mode=644
   with_items: websites
+  when: domain is not defined or domain == item.domain
   notify: restart nginx
   tags:
     - website
@@ -10,6 +11,7 @@
 - name: Add php-fpm pool files
   template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ item.domain }}.conf owner=root mode=644
   with_items: websites
+  when: domain is not defined or domain == item.domain
   notify: restart php-fpm
   tags:
     - website
@@ -17,7 +19,7 @@
 - name: Clone repositories
   git: repo={{ item.git }} dest=/var/www/{{ item.domain }} version={{ item.version | default('master') }} update=yes accept_hostkey=yes
   with_items: websites
-  when: item.git
+  when: item.git is defined and (domain is not defined or domain == item.domain)
   tags:
     - website
     - deploy
@@ -25,6 +27,7 @@
 - name: Launch composer dependencies
   command: cd /var/www/{{ item.domain }}/ && [ -e "composer.json" ] && composer install -o || echo "No dependencies found."
   with_items: websites
+  when: domain is not defined or domain == item.domain
   tags:
     - website
     - deploy
@@ -32,6 +35,7 @@
 - name: Install npm dependencies
   command: cd /var/www/{{ item.domain }}/ && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
   with_items: websites
+  when: domain is not defined or domain == item.domain
   tags:
     - website
     - deploy
@@ -39,6 +43,7 @@
 - name: Install bower dependencies
   command: cd /var/www/{{ item.domain }}/ && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
   with_items: websites
+  when: domain is not defined or domain == item.domain
   tags:
     - website
     - deploy
@@ -46,6 +51,7 @@
 - name: Execute grunt files
   command: cd /var/www/{{ item.domain }}/ && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
   with_items: websites
+  when: domain is not defined or domain == item.domain
   tags:
     - website
     - deploy
@@ -53,7 +59,7 @@
 - name: Apply good rights
   command: cd /var/www/ && chmod -R 775 {{ item.domain }}/ && chown -R vagrant:www-data {{ item.domain }}/
   with_items: websites
-  when: env == 'dev'
+  when: env == 'dev' and (domain is not defined or domain == item.domain)
   tags:
     - website
     - deploy
@@ -61,7 +67,7 @@
 - name: Apply good rights
   command: cd /var/www/ && chmod -R 775 {{ item.domain }}/ && chown -R vagrant:www-data {{ item.domain }}/
   with_items: websites
-  when: env != 'dev'
+  when: env != 'dev' and (domain is not defined or domain == item.domain)
   tags:
     - website
     - deploy
