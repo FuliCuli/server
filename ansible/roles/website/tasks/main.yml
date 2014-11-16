@@ -1,7 +1,7 @@
 ---
 
 - name: Add nginx host files
-  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.domain }}.conf owner=root mode=644
+  template: src=nginx.conf.j2 dest=/etc/nginx/sites-enabled/{{ item.domain }}.conf owner=root mode=644
   with_items: websites
   when: domain is not defined or domain == item.domain
   notify: restart nginx
