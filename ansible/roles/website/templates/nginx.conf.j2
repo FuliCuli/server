@@ -27,9 +27,11 @@ server {
         }
  
         location ~ \.php$ {
-        try_files $uri =404;
-                fastcgi_pass unix:/var/run/php5-fpm/{{ item.domain }}.socket;
-                fastcgi_index index.php;
+                try_files $uri =404;
                 include /etc/nginx/fastcgi_params;
+                fastcgi_pass unix:/var/run/{{ item.domain }}.sock;
+                fastcgi_index {% if item.type|default(null) == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                fastcgi_param HTTP_CLIENT_IP $remote_addr;
         }
 }

@@ -1,6 +1,6 @@
 [{{ item.domain }}]
 
-listen = /var/run/php5-fpm/{{ item.domain }}.socket
+listen = /var/run/{{ item.domain }}.sock
 listen.backlog = -1
 listen.owner = nginx
 listen.group = www-data
@@ -14,10 +14,10 @@ user = {% if env == 'dev' %}vagrant{% else %}www-data{% endif %}
 ; Choose how the process manager will control the number of child processes.
 pm = dynamic
 pm.max_children = 75
-pm.start_servers = 10
+;pm.start_servers = 10
 pm.min_spare_servers = 5
 pm.max_spare_servers = 20
-pm.max_requests = 500
+;pm.max_requests = 500
 
 ; Pass environment variables
 env[HOSTNAME] = $HOSTNAME
