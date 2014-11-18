@@ -6,8 +6,14 @@ server {
 server {
         listen {% if item.ssl is defined %}443{% else %}80{% endif %};
         server_name {{ item.domain }};
-                root   /var/www/{{ item.domain }}/{{ item.web_dir | default('web') }};
-                index {% if item.type|default(null) == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
+
+        set $version 'release';
+        if ($http_x_version) {
+            set $version $http_x_version;
+        }
+
+        root   /var/www/{{ item.domain }}/$version/{{ item.web_dir | default('web') }};
+        index {% if item.type|default(null) == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
 
         # Logging
         {% if env != 'prod' %}
@@ -29,9 +35,9 @@ server {
         location ~ \.php$ {
                 try_files $uri =404;
                 include /etc/nginx/fastcgi_params;
+
                 fastcgi_pass unix:/var/run/{{ item.domain }}.sock;
                 fastcgi_index {% if item.type|default(null) == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-                fastcgi_param HTTP_CLIENT_IP $remote_addr;
         }
 }
