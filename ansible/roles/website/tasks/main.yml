@@ -78,35 +78,30 @@
     - website
     - deploy
 
-- name: Apply good rights for dev environment
-  shell: cd /var/www/{{ item.domain }} && chmod -R 775 {{ item.version | default('master') }}/ && chown -R vagrant:www-data {{ item.version | default('master') }}/
+- set_fact: user="www-data"
+  when: env != 'dev'
+  tags:
+    - website
+    - deploy
+
+- set_fact: user="vagrant"
+  when: env == 'dev'
+  tags:
+    - website
+    - deploy
+
+- name: Apply good rights
+  shell: cd /var/www/{{ item.domain }} && chmod -R 775 {{ item.version | default('master') }}/ && chown -R {{ user }}:www-data {{ item.version | default('master') }}/
   with_items: websites
   when: env == 'dev' and (domain is not defined or domain == item.domain)
   tags:
     - website
     - deploy
 
-- name: Apply good rights for others environments
-  shell: cd /var/www/{{ item.domain }} && chmod -R 775 {{ item.version | default('master') }}/ && chown -R www-data:www-data {{ item.version | default('master') }}/
-  with_items: websites
-  when: env != 'dev' and (domain is not defined or domain == item.domain)
-  tags:
-    - website
-    - deploy
-
 - name: Change release folder
-  file: src=/var/www/{{ item.domain }}/{{ item.version | default('master') }} dest=/var/www/{{ item.domain }}/release owner=vagrant group=www-data state=link
+  file: src=/var/www/{{ item.domain }}/{{ item.version | default('master') }} dest=/var/www/{{ item.domain }}/release owner={{ user }} group=www-data state=link
   with_items: websites
   when: env == 'dev' and (domain is not defined or domain == item.domain)
-  notify: restart php-fpm
-  tags:
-    - website
-    - deploy
-
-- name: Change release folder
-  file: src=/var/www/{{ item.domain }}/{{ item.version | default('master') }} dest=/var/www/{{ item.domain }}/release owner=www-data group=www-data state=link
-  with_items: websites
-  when: env != 'dev' and (domain is not defined or domain == item.domain)
   notify: restart php-fpm
   tags:
     - website
