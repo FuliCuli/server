@@ -27,6 +27,13 @@
     - webserver
     - nginx
 
+- name: Config common ssl files
+  template: src=fuliculi-ssl.conf.j2 dest=/etc/nginx/conf.d/fuliculi-ssl.conf
+  when: ssl is defined
+  tags:
+    - webserver
+    - nginx
+
 - name: Define new default index file
   copy: src=default.html dest=/usr/share/nginx/html/index.html
   tags:

@@ -17,6 +17,18 @@ websites: {
             mailer_user: "null",
             mailer_password: "null",
             locale: en
-        }
+        },
+#        ssl: {
+#            cert: /etc/ssl/certs/fuliculi.pem,
+#            key: /etc/ssl/private/fuliculi.key,
+#        }
+# Or if you use common cert files, you can just define ssl = true
+#        ssl: true
     }
 }
+
+# If you define it here, you just have to define ssl = true into each website that use it
+#ssl: {
+#    cert: /etc/ssl/certs/fuliculi.pem,
+#    key: /etc/ssl/private/fuliculi-common.key
+#}

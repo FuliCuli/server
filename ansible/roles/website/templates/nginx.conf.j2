@@ -4,7 +4,17 @@ server {
 }
 
 server {
-        listen {% if website.ssl is defined %}443{% else %}80{% endif %};
+        {% if website.ssl is defined %}
+        listen 443 ssl;
+        keepalive_timeout   {{ website.ssl.timeout | default(70) }};
+        ssl_certificate      {{ website.ssl.cert }};
+        ssl_certificate_key  {{ website.ssl.key }};
+        ssl_ciphers  HIGH:!aNULL:!MD5;
+        ssl_prefer_server_ciphers   on;
+        {% else %}
+        listen 80;
+        {% endif %}
+
         server_name {{ website.domain }};
 
         set $version 'release';
