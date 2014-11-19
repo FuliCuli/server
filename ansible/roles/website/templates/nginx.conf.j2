@@ -1,24 +1,24 @@
 server {
-    server_name  www.{{ item.domain }};
-    rewrite ^(.*) http://{{ item.domain }}$1 permanent;
+    server_name  www.{{ website.domain }};
+    rewrite ^(.*) http://{{ website.domain }}$1 permanent;
 }
 
 server {
-        listen {% if item.ssl is defined %}443{% else %}80{% endif %};
-        server_name {{ item.domain }};
+        listen {% if website.ssl is defined %}443{% else %}80{% endif %};
+        server_name {{ website.domain }};
 
         set $version 'release';
         if ($http_x_version) {
             set $version $http_x_version;
         }
 
-        root   /var/www/{{ item.domain }}/$version/{{ item.web_dir | default('web') }};
-        index {% if item.type|default(null) == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
+        root   /var/www/{{ website.domain }}/$version/{{ website.web_dir | default('web') }};
+        index {% if website.type|default('other') == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
 
         # Logging
         {% if env != 'prod' %}
-        access_log  /var/log/nginx/{{ item.domain }}.access.log;
-        error_log  /var/log/nginx/{{ item.domain }}.error.log debug;
+        access_log  /var/log/nginx/{{ website.domain }}.access.log;
+        error_log  /var/log/nginx/{{ website.domain }}.error.log debug;
         {% else %}
         access_log  /var/log/nginx/access.log;
         error_log  /var/log/nginx/error.log warn;
@@ -36,8 +36,8 @@ server {
                 try_files $uri =404;
                 include /etc/nginx/fastcgi_params;
 
-                fastcgi_pass unix:/var/run/{{ item.domain }}.sock;
-                fastcgi_index {% if item.type|default(null) == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
+                fastcgi_pass unix:/var/run/{{ website.domain }}.sock;
+                fastcgi_index {% if website.type|default('other') == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         }
 }

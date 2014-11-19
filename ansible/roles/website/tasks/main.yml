@@ -1,108 +1,67 @@
 ---
 
+- name: Start new deployment
+  debug: msg="{{ website }}"
+
 - name: Add nginx host files
-  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.domain }}.conf owner=root mode=644
-  with_items: websites
-  when: domain is not defined or domain == item.domain
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ website.domain }}.conf owner=root mode=644
   notify: restart nginx
-  tags:
-    - website
 
 - name: Add php-fpm pool files
-  template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ item.domain }}.conf owner=root mode=644
-  with_items: websites
-  when: domain is not defined or domain == item.domain
+  template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ website.domain }}.conf owner=root mode=644
   notify: restart php-fpm
-  tags:
-    - website
-
-- name: Check if site folder exists
-  stat: path=/var/www/{{ item.domain }}
-  register: check_path
-
-- name: It doesn't so we create it
-  shell: mkdir /var/www/{{ item.domain }}
-  when: check_path.stat.exists == false
-
-- name: Clone repositories
-  git: repo={{ item.git }} dest=/var/www/{{ item.domain }}/{{ item.version | default('master') }} version={{ item.version | default('master') }} update=yes accept_hostkey=yes
-  with_items: websites
-  when: item.git is defined and (domain is not defined or domain == item.domain)
-  tags:
-    - website
-    - deploy
-
-- name: Launch composer dependencies
-  shell: cd /var/www/{{ item.domain }}/{{ item.version | default('master') }} && [ -e "composer.json" ] && composer install -o -q || echo "No dependencies found."
-  with_items: websites
-  when: domain is not defined or domain == item.domain
-  sudo: yes
-  tags:
-    - website
-    - deploy
-
-- name: Install npm dependencies
-  shell: cd /var/www/{{ item.domain }}/{{ item.version | default('master') }} && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
-  with_items: websites
-  when: domain is not defined or domain == item.domain
-  tags:
-    - website
-    - deploy
-
-- name: Install bower dependencies
-  shell: cd /var/www/{{ item.domain }}/{{ item.version | default('master') }} && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
-  with_items: websites
-  when: domain is not defined or domain == item.domain
-  tags:
-    - website
-    - deploy
-
-- name: Execute grunt files
-  shell: cd /var/www/{{ item.domain }}/{{ item.version | default('master') }} && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
-  with_items: websites
-  when: domain is not defined or domain == item.domain
-  tags:
-    - website
-    - deploy
-
-- include: symfony.yml
-  tags:
-    - website
-    - deploy
-    - symfony
-
-- name: Create version file
-  template: src=version.txt.j2 dest=/var/www/{{ item.domain }}/{{ item.version | default('master') }}/{{ item.web_dir | default('web') }}/version.txt
-  with_items: websites
-  tags:
-    - website
-    - deploy
 
 - set_fact: user="www-data"
   when: env != 'dev'
-  tags:
-    - website
-    - deploy
 
 - set_fact: user="vagrant"
   when: env == 'dev'
-  tags:
-    - website
-    - deploy
+
+- name: Define website directory
+  set_fact: website_dir={{ web_directory }}{{ website.domain }}
+
+- name: Define release version
+  set_fact: version={{ website.version | default('master') }}
+
+- name: Check if site directory exists
+  stat: path={{ website_dir }}
+  register: check_path
+
+- name: It doesn't so we create it
+  file: dest={{ website_dir }} owner={{ user }} group=www-data state=directory
+  when: check_path.stat.exists == false
+
+- name: Clone repository
+  git: repo={{ website.git }} dest={{ website_dir }}/{{ version }} version={{ version }} update=yes accept_hostkey=yes
+  when: website.git is defined
+
+- name: Launch composer dependencies
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "composer.json" ] && composer install -o -q || echo "No dependencies found."
+  sudo: yes
+
+- name: Install npm dependencies
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
+
+- name: Install bower dependencies
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
+
+- name: Execute grunt files
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
+
+- include: symfony.yml
+  when: website.type|default(false) == 'symfony'
+
+- name: Check if web directory exists
+  stat: path={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}
+  register: check_web_path
+
+- name: Create version file
+  template: src=version.txt.j2 dest={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}/version.txt
+  when: check_web_path.stat.exists == true
 
 - name: Apply good rights
-  shell: cd /var/www/{{ item.domain }} && chmod -R 775 {{ item.version | default('master') }}/ && chown -R {{ user }}:www-data {{ item.version | default('master') }}/
-  with_items: websites
-  when: env == 'dev' and (domain is not defined or domain == item.domain)
-  tags:
-    - website
-    - deploy
+  shell: cd {{ website_dir }} && chmod -R 775 {{ version }}/ && chown -R {{ user }}:www-data {{ version }}/
 
 - name: Change release folder
-  file: src=/var/www/{{ item.domain }}/{{ item.version | default('master') }} dest=/var/www/{{ item.domain }}/release owner={{ user }} group=www-data state=link
-  with_items: websites
-  when: env == 'dev' and (domain is not defined or domain == item.domain)
+  file: src={{ website_dir }}/{{ version }} dest={{ website_dir }}/release owner={{ user }} group=www-data state=link
   notify: restart php-fpm
-  tags:
-    - website
-    - deploy

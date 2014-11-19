@@ -1,5 +1,5 @@
 parameters:
-{% for key,value in item.params.items() %}
+{% for key,value in website.params.items() %}
     {% if key != 'secret' %}{{ key }}: {{ value|default('~') }}{% endif %}
 
 {% endfor %}

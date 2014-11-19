@@ -4,10 +4,14 @@ env: dev
 
 db_open_port: true
 
-websites:
-  - { domain: fuliculi.dev, git: "https://github.com/FuliCuli/fuliculi.git" }
-  - { 
+websites: {
+    fuliculi: { 
+        domain: fuliculi.dev, 
+        git: "https://github.com/FuliCuli/fuliculi.git"
+    },
+    api: { 
         domain: api.dev, 
+        version: acd7d089093fc33aa30e4a0e02d09257acb653c2,
         git: "https://github.com/FuliCuli/api.git", 
         type: "symfony",
         params: {
@@ -18,3 +22,4 @@ websites:
             locale: en
         }
     }
+}

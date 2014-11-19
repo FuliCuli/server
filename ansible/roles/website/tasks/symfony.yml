@@ -5,6 +5,4 @@
   register: symfony_secret_token
 
 - name: Define symfony parameters
-  template: src=symfony.parameters.yml.j2 dest=/var/www/{{ item.domain }}/{{ item.version | default('master') }}/app/config/parameters.yml
-  when: (domain is not defined or domain == item.domain) and item.type|default(false) == 'symfony'
-  with_items: websites
+  template: src=symfony.parameters.yml.j2 dest={{ website_dir }}/{{ version }}/app/config/parameters.yml

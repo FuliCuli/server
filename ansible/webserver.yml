@@ -40,4 +40,5 @@
   sudo: yes
 
   roles:
-    - website
+    - { role: website, tags: ["website", "api"], website: "{{ websites['api'] }}" }
+    - { role: website, tags: ["website", "fuliculi"], website: "{{ websites['fuliculi'] }}" }

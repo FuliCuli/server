@@ -1,6 +1,6 @@
-[{{ item.domain }}]
+[{{ website.domain }}]
 
-listen = /var/run/{{ item.domain }}.sock
+listen = /var/run/{{ website.domain }}.sock
 listen.backlog = -1
 listen.owner = nginx
 listen.group = www-data
