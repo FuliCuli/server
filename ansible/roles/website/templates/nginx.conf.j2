@@ -40,4 +40,6 @@ server {
                 fastcgi_index {% if website.type|default('other') == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         }
+
+        location ~ /\.  { return 403; }
 }
