@@ -56,12 +56,14 @@
   register: check_web_path
 
 - name: Create version file
-  template: src=version.txt.j2 dest={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}/version.txt
+  template: src=version.txt.j2 dest={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}/version.txt owner={{ user }} group=www-data
   when: check_web_path.stat.exists == true
 
-- name: Apply good rights
-  shell: cd {{ website_dir }} && chmod -R 775 {{ version }}/ && chown -R {{ user }}:www-data {{ version }}/
+# - name: Apply good rights
+#   shell: cd {{ website_dir }} && chmod -R 775 {{ version }}/ && chown -R {{ user }}:www-data {{ version }}/
 
 - name: Change release folder
   file: src={{ website_dir }}/{{ version }} dest={{ website_dir }}/release owner={{ user }} group=www-data state=link
   notify: restart php-fpm
+
+- include: right.yml

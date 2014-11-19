@@ -6,3 +6,9 @@
 
 - name: Define symfony parameters
   template: src=symfony.parameters.yml.j2 dest={{ website_dir }}/{{ version }}/app/config/parameters.yml
+
+- name: Clear symfony cache
+  shell: "sudo php app/console cache:clear --env={{ env }} chdir={{ website_dir }}/{{ version }}"
+  notify: restart php-fpm
+
+- include: right.yml
