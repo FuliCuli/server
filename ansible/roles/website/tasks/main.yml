@@ -1,5 +1,17 @@
 ---
 
+- set_fact: user="www-data"
+  when: env != 'dev'
+
+- set_fact: user="vagrant"
+  when: env == 'dev'
+
+- name: Define other variables
+  set_fact: 
+    website_dir: "{{ web_directory }}{{ website.domain }}"
+    version: "{{ website.version | default('master') }}"
+    type: "{{ website.type|default('other') }}"
+
 - name: Start new deployment
   debug: msg="{{ website }}"
 
@@ -10,18 +22,6 @@
 - name: Add php-fpm pool files
   template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ website.domain }}.conf owner=root mode=644
   notify: restart php-fpm
-
-- set_fact: user="www-data"
-  when: env != 'dev'
-
-- set_fact: user="vagrant"
-  when: env == 'dev'
-
-- name: Define website directory
-  set_fact: website_dir={{ web_directory }}{{ website.domain }}
-
-- name: Define release version
-  set_fact: version={{ website.version | default('master') }}
 
 - name: Check if site directory exists
   stat: path={{ website_dir }}
@@ -49,7 +49,7 @@
   shell: cd {{ website_dir }}/{{ version }} && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
 
 - include: symfony.yml
-  when: website.type|default(false) == 'symfony'
+  when: type == 'symfony'
 
 - name: Check if web directory exists
   stat: path={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}

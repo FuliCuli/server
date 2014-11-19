@@ -23,7 +23,7 @@ server {
         }
 
         root   /var/www/{{ website.domain }}/$version/{{ website.web_dir | default('web') }};
-        index {% if website.type|default('other') == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
+        index {% if type == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
 
         # Logging
         {% if env != 'prod' %}
@@ -47,7 +47,7 @@ server {
                 include /etc/nginx/fastcgi_params;
 
                 fastcgi_pass unix:/var/run/{{ website.domain }}.sock;
-                fastcgi_index {% if website.type|default('other') == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
+                fastcgi_index {% if type == 'symfony' %}{% if env == 'dev' %}app_dev.php{% else %}app.php{% endif %}{% else %}index.php{% endif %};
                 fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
         }
 
