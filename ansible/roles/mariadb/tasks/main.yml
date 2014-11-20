@@ -32,6 +32,13 @@
 - name: Create a root password
   shell: echo $(pwgen -Bs 20 1)
   register: mariadb_root_password
+  when: env != "dev"
+  tags:
+    - mariadb
+
+- name: Empty password for dev environment
+  set_fact: mariadb_root_password=""
+  when: env == "dev"
   tags:
     - mariadb
 
