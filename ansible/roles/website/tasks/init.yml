@@ -1,0 +1,17 @@
+---
+
+- set_fact: user="www-data"
+  when: env != 'dev'
+
+- set_fact: user="vagrant"
+  when: env == 'dev'
+
+- name: Define other variables
+  set_fact: 
+    website_dir: "{{ web_directory }}{{ website.domain }}"
+    version: "{{ website.version | default('master') }}"
+    type: "{{ website.type|default('other') }}"
+    website_webdir: "{{ website.web_dir | default('web') }}"
+
+- name: Start new deployment
+  debug: msg="{{ website }}"

@@ -15,12 +15,24 @@ ntp_fallback: ntp.ubuntu.com
 
 timezone: Europe/Paris
 
-nginx_worker_connections: 768
-nginx_worker_processes: 1
-
 web_directory: /var/www/
 
+# Config nginx
+nginx: {
+    security: {
+        server_tokens: off
+    },
+    gzip: {
+        gzip_vary: on,
+        gzip_proxied: any,
+        gzip_comp_level: 6,
+        gzip_buffers: "16 8k",
+        gzip_http_version: "1.1",
+        gzip_types: "text/plain text/css application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript"
+    }
+}
+
 ssl_directory: {
-    cert: "/etc/ssl/cert/",
+    cert: "/etc/ssl/certs/",
     key: "/etc/ssl/private/"
 }

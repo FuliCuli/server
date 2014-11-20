@@ -1,0 +1,13 @@
+---
+
+- name: Check if web directory exists
+  stat: path={{ website_dir }}/{{ version }}/{{ website_webdir }}
+  register: check_web_path
+
+- name: Create version file
+  template: src=version.txt.j2 dest={{ website_dir }}/{{ version }}/{{ website_webdir }}/version.txt owner={{ user }} group=www-data
+  when: check_web_path.stat.exists == true
+
+- name: Change release folder
+  file: src={{ website_dir }}/{{ version }} dest={{ website_dir }}/release owner={{ user }} group=www-data state=link
+  notify: restart php-fpm

@@ -20,6 +20,9 @@ websites: {
             mailer_user: "null",
             mailer_password: "null",
             locale: en
+        },
+        api: {
+            allow_methods: "POST, PUT, PATCH, GET, DELETE"
         }
     }
 }

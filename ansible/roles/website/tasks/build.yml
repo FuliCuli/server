@@ -13,5 +13,5 @@
 - name: Execute grunt files
   shell: cd {{ website_dir }}/{{ version }} && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
 
-- include: {{ type }}.yml
-  when: type != 'other'
+- include: symfony.yml
+  when: type == 'symfony'

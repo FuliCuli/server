@@ -18,6 +18,9 @@ websites: {
             mailer_password: "null",
             locale: en
         },
+        api: {
+            allow_methods: "POST, PUT, PATCH, GET, DELETE"
+        },
 #        ssl: {
 #            cert: /etc/ssl/certs/fuliculi.pem,
 #            key: /etc/ssl/private/fuliculi.key,

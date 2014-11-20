@@ -1,49 +1,13 @@
 ---
 
-- set_fact: user="www-data"
-  when: env != 'dev'
-
-- set_fact: user="vagrant"
-  when: env == 'dev'
-
-- name: Define other variables
-  set_fact: 
-    website_dir: "{{ web_directory }}{{ website.domain }}"
-    version: "{{ website.version | default('master') }}"
-    type: "{{ website.type|default('other') }}"
-
-- name: Start new deployment
-  debug: msg="{{ website }}"
+- include: init.yml
 
 - include: config.yml
 
-- name: Check if site directory exists
-  stat: path={{ website_dir }}
-  register: check_path
-
-- name: It doesn't so we create it
-  file: dest={{ website_dir }} owner={{ user }} group=www-data state=directory
-  when: check_path.stat.exists == false
-
-- name: Clone repository
-  git: repo={{ website.git }} dest={{ website_dir }}/{{ version }} version={{ version }} update=yes accept_hostkey=yes
-  when: website.git is defined
+- include: install.yml
 
 - include: build.yml
 
-- name: Check if web directory exists
-  stat: path={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}
-  register: check_web_path
-
-- name: Create version file
-  template: src=version.txt.j2 dest={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}/version.txt owner={{ user }} group=www-data
-  when: check_web_path.stat.exists == true
-
-# - name: Apply good rights
-#   shell: cd {{ website_dir }} && chmod -R 775 {{ version }}/ && chown -R {{ user }}:www-data {{ version }}/
-
-- name: Change release folder
-  file: src={{ website_dir }}/{{ version }} dest={{ website_dir }}/release owner={{ user }} group=www-data state=link
-  notify: restart php-fpm
+- include: release.yml
 
 - include: right.yml
