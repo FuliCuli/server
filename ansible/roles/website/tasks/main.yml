@@ -15,13 +15,7 @@
 - name: Start new deployment
   debug: msg="{{ website }}"
 
-- name: Add nginx host files
-  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ website.domain }}.conf owner=root mode=644
-  notify: restart nginx
-
-- name: Add php-fpm pool files
-  template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ website.domain }}.conf owner=root mode=644
-  notify: restart php-fpm
+- include: config.yml
 
 - name: Check if site directory exists
   stat: path={{ website_dir }}
@@ -35,21 +29,7 @@
   git: repo={{ website.git }} dest={{ website_dir }}/{{ version }} version={{ version }} update=yes accept_hostkey=yes
   when: website.git is defined
 
-- name: Launch composer dependencies
-  shell: cd {{ website_dir }}/{{ version }} && [ -e "composer.json" ] && composer install -o -q || echo "No dependencies found."
-  sudo: yes
-
-- name: Install npm dependencies
-  shell: cd {{ website_dir }}/{{ version }} && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
-
-- name: Install bower dependencies
-  shell: cd {{ website_dir }}/{{ version }} && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
-
-- name: Execute grunt files
-  shell: cd {{ website_dir }}/{{ version }} && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
-
-- include: symfony.yml
-  when: type == 'symfony'
+- include: build.yml
 
 - name: Check if web directory exists
   stat: path={{ website_dir }}/{{ version }}/{{ website.web_dir | default('web') }}

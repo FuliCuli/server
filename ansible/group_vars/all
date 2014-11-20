@@ -19,3 +19,8 @@ nginx_worker_connections: 768
 nginx_worker_processes: 1
 
 web_directory: /var/www/
+
+ssl_directory: {
+    cert: "/etc/ssl/cert/",
+    key: "/etc/ssl/private/"
+}

@@ -1,2 +1,4 @@
+---
+
 - name: Apply rights
   shell: cd {{ website_dir }} && chmod -R 775 {{ version }}/ && chown -R {{ user }}:www-data {{ version }}/

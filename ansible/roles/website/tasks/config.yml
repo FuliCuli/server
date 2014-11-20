@@ -1,0 +1,17 @@
+---
+
+- name: Add nginx host files
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ website.domain }}.conf owner=root mode=644
+  notify: restart nginx
+
+- name: Add php-fpm pool files
+  template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ website.domain }}.conf owner=root mode=644
+  notify: restart php-fpm
+
+- name: Copy ssl cert file
+  copy: src=../../../ssl/{{ website.ssl.cert }} dest={{ ssl_directory.cert }}{{ website.ssl.cert }}
+  when: website.ssl.cert is defined
+
+- name: Copy ssl key file
+  copy: src=../../../ssl/{{ website.ssl.key }} dest={{ ssl_directory.key }}{{ website.ssl.key }}
+  when: website.ssl.key is defined

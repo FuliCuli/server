@@ -1,0 +1,17 @@
+---
+
+- name: Launch composer dependencies
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "composer.json" ] && composer install -o -q || echo "No dependencies found."
+  sudo: yes
+
+- name: Install npm dependencies
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
+
+- name: Install bower dependencies
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
+
+- name: Execute grunt files
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
+
+- include: {{ type }}.yml
+  when: type != 'other'
