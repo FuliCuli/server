@@ -21,6 +21,21 @@
   tags:
     - mongodb
 
+- name: Install php driver
+  command: pecl install mongo
+  ignore_errors: yes
+  tags:
+    - mongodb
+    - php
+
+- name: Active php extension
+  copy: src=mongo.ini dest=/etc/php.d/
+  ignore_errors: yes
+  notify: restart php-fpm
+  tags:
+    - mongodb
+    - php
+
 - name: insert iptables input rule
   lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ mongodb_port }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ mongodb_port }} -m state --state NEW,ESTABLISHED -j ACCEPT'"
   when: db_open_port
