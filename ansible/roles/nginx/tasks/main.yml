@@ -18,33 +18,31 @@
 - name: Install nginx
   apt: name=nginx state=latest update_cache=true
   tags:
-    - webserver
     - nginx
 
 - name: Update nginx configuration
-  template: src=nginx.conf dest=/etc/nginx/conf.d/{{ item.key }}.conf
-  with_items: nginx
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.key }}.conf
+  with_dict: nginx
   tags:
-    - webserver
     - nginx
 
 - name: Config common ssl files
   template: src=ssl.conf.j2 dest=/etc/nginx/conf.d/ssl.conf
   when: ssl is defined
   tags:
-    - webserver
     - nginx
 
 - name: Define new default index file
   copy: src=default.html dest=/usr/share/nginx/html/index.html
   tags:
-    - webserver
     - nginx
 
-- name: insert iptables rule for httpd
-  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ httpd_port }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ httpd_port }} -j ACCEPT'"
+- name: "Insert iptables rule for http & https"
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ item }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ item }} -j ACCEPT'"
+  with_items:
+    - standard_port
+    - ssl_port
   tags:
-    - webserver
     - nginx
     - firewall
   notify: restart firewall
