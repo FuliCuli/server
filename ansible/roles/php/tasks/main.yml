@@ -32,18 +32,17 @@
     - php
     - php-cli
 
-- name: Check if nginx is installed
-  stat: path=/etc/nginx/conf.d
-  register: nginx
+- name: Install php driver
+  command: pecl install mongo
+  ignore_errors: yes
   tags:
-    - webserver
+    - mongodb
     - php
-    - php-fpm
 
-- name: Configure nginx
-  copy: src=nginx.conf dest=/etc/nginx/conf.d/php-fpm.conf force=no
-  when: nginx.stat.exists
+- name: Active php extension
+  copy: src=mongo.ini dest=/etc/php.d/
+  ignore_errors: yes
+  notify: restart php-fpm
   tags:
-    - webserver
+    - mongodb
     - php
-    - php-fpm
