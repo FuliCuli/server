@@ -1,0 +1,6 @@
+---
+
+mariadb:
+    port: 3306
+    open: false
+    root_password: ""
