@@ -1,0 +1,27 @@
+---
+
+websites:
+    fuliculi:
+        domain: fuliculi.com
+        alternative_domain:
+            - www.fuliculi.com
+        git: "https://github.com/FuliCuli/fuliculi.git"
+        ssl: true
+    api:
+        domain: api.fuliculi.com
+        version: acd7d089093fc33aa30e4a0e02d09257acb653c2
+        git: "https://github.com/FuliCuli/api.git"
+        type: "symfony"
+        ssl: true
+        params:
+            mailer_transport: smtp
+            mailer_host: "127.0.0.1"
+            mailer_user: "null"
+            mailer_password: "null"
+            locale: fr
+        api:
+            allow_origin: "https://fuliculi.com"
+
+ssl:
+    cert: fuliculi.pem
+    key: fuliculi.key

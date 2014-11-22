@@ -19,7 +19,6 @@
   sudo: yes
 
   roles:
-    - java
     - elasticsearch
 
 - name: Tools to build applications

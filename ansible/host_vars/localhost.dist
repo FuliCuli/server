@@ -2,27 +2,16 @@
 
 env: dev
 
-db_open_port: true
+mariadb:
+    open: true
 
-websites: {
-    fuliculi: { 
-        domain: fuliculi.dev, 
-        git: "https://github.com/FuliCuli/fuliculi.git"
-    },
-    api: { 
-        domain: api.dev, 
-        version: acd7d089093fc33aa30e4a0e02d09257acb653c2,
-        git: "https://github.com/FuliCuli/api.git", 
-        type: "symfony",
-        params: {
-            mailer_transport: smtp,
-            mailer_host: "127.0.0.1",
-            mailer_user: "null",
-            mailer_password: "null",
-            locale: en
-        },
-        api: {
-            allow_methods: "POST, PUT, PATCH, GET, DELETE"
-        }
-    }
-}
+websites:
+    fuliculi:
+        domain: fuliculi.dev
+        alternative_domain:
+            - www.fuliculi.dev
+        ssl: false
+    api:
+        domain: api.dev
+        ssl: false
+        version: acd7d089093fc33aa30e4a0e02d09257acb653c2

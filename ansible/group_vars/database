@@ -1,6 +1,1 @@
-# MariaDB
-db_port: 3306
-db_open_port: false
-
-# MongoDB
-mongodb_port: 27017
+---

@@ -1,0 +1,17 @@
+---
+
+- name: Define web index for dev environment
+  set_fact:
+    web_index: "app_dev.php"
+  when: env == 'dev'
+  tags:
+    - website
+    - symfony
+
+- name: Define web index for other environments
+  set_fact:
+    web_index: "app.php"
+  when: env != 'dev'
+  tags:
+    - website
+    - symfony

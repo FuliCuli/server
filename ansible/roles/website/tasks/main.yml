@@ -10,4 +10,8 @@
 
 - include: release.yml
 
+- include: common.yml
+
+- include: cron.yml
+
 - include: right.yml

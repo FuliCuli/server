@@ -1,17 +1,28 @@
 ---
 
+- include: symfony/config.yml
+  when: type == 'symfony'
+
 - name: Launch composer dependencies
   shell: cd {{ website_dir }}/{{ version }} && [ -e "composer.json" ] && composer install -o -q || echo "No dependencies found."
   sudo: yes
+  tags:
+    - website
 
 - name: Install npm dependencies
   shell: cd {{ website_dir }}/{{ version }} && [ -e "package.json" ] && npm install -o || echo "No dependencies found."
+  tags:
+    - website
 
 - name: Install bower dependencies
   shell: cd {{ website_dir }}/{{ version }} && [ -e "bower.json" ] && bower install --allow-root ./ || echo "No dependencies found."
+  tags:
+    - website
 
-- name: Execute grunt files
-  shell: cd {{ website_dir }}/{{ version }} && [ -e "Gruntfile.json" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
+- name: Execute grunt file
+  shell: cd {{ website_dir }}/{{ version }} && [ -e "Gruntfile.js" ] && LANG=en_US.UTF-8 grunt -o || echo "No grunt file found."
+  tags:
+    - website
 
-- include: symfony.yml
+- include: symfony/build.yml
   when: type == 'symfony'
