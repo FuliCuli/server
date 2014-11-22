@@ -22,6 +22,6 @@ websites:
         api:
             allow_origin: "https://fuliculi.com"
 
-ssl:
+generic_ssl:
     cert: fuliculi.pem
     key: fuliculi.key

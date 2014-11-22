@@ -44,8 +44,8 @@
 
 - name: Define generic ssl cert files
   set_fact:
-    ssl_key_file: "{{ ssl_directory.cert }}{{ ssl.key }}"
-  when: ssl.key is defined
+    ssl_key_file: "{{ ssl_directory.cert }}{{ generic_ssl.key }}"
+  when: generic_ssl.key is defined
   tags:
     - website
 
@@ -58,8 +58,8 @@
 
 - name: Define generic ssl key files
   set_fact:
-    ssl_cert_file: "{{ ssl_directory.key }}{{ ssl.key }}"
-  when: ssl.key is defined
+    ssl_cert_file: "{{ ssl_directory.key }}{{ generic_ssl.key }}"
+  when: generic_ssl.key is defined
   tags:
     - website
 
