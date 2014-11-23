@@ -7,7 +7,7 @@
     - website
 
 - name: It doesn't so we create it
-  file: dest={{ website_dir }} owner={{ user }} group={{ group }} chmod=0775 state=directory
+  file: dest={{ website_dir }} owner={{ user }} group={{ group }} mode=0775 state=directory
   when: check_path.stat.exists == false
   tags:
     - website
