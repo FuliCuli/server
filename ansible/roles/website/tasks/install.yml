@@ -3,11 +3,17 @@
 - name: Check if site directory exists
   stat: path={{ website_dir }}
   register: check_path
+  tags:
+    - website
 
 - name: It doesn't so we create it
-  file: dest={{ website_dir }} owner={{ user }} group=www-data state=directory
+  file: dest={{ website_dir }} owner={{ user }} group={{ group }} chmod=0775 state=directory
   when: check_path.stat.exists == false
+  tags:
+    - website
 
 - name: Clone repository
   git: repo={{ website.git }} dest={{ website_dir }}/{{ version }} version={{ version }} update=yes accept_hostkey=yes
   when: website.git is defined
+  tags:
+    - website

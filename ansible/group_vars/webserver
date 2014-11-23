@@ -7,12 +7,17 @@ websites:
             - www.fuliculi.com
         git: "https://github.com/FuliCuli/fuliculi.git"
         ssl: true
+        user: fuliculi
     api:
         domain: api.fuliculi.com
+        prerelease:
+            - domain: beta.fuliculi.com
+              release: beta
         version: acd7d089093fc33aa30e4a0e02d09257acb653c2
         git: "https://github.com/FuliCuli/api.git"
         type: "symfony"
         ssl: true
+        user: fuliculi
         params:
             mailer_transport: smtp
             mailer_host: "127.0.0.1"

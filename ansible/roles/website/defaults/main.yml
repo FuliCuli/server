@@ -16,3 +16,5 @@ ssl: false
 
 web_directory: /var/www/
 web_index: "index.php"
+
+release: release

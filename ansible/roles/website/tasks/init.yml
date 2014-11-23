@@ -5,11 +5,18 @@
   tags:
     - website
 
-- name: Define user & group for dev environment
+- name: Define variables for dev environment
   set_fact: 
     user: "vagrant"
     group: "vagrant"
   when: env == 'dev'
+  tags:
+    - website
+
+- name: Define variables for other environments
+  set_fact: 
+    user: "{{ website.user|default(user) }}"
+ # when: env != 'dev'
   tags:
     - website
 

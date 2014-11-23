@@ -3,13 +3,13 @@ server {
     server_name{% for value in website.alternative_domain.items() %} {{ value }}{% endfor %};
     rewrite ^(.*) {{ protocol }}{{ website.domain }}$1 permanent;
 }
-{% endif %}
 
+{% endif %}
 server {
     listen {{ redirect_port }}{% if ssl %} ssl{% endif %};
 
-    server_name {{ website.domain }};
-    rewrite ^(.*) {{ protocol }}{{ website.domain }}$1 permanent;
+    server_name {{ website.domain }}{% for pre in website.prerelease %} {{ pre.domain }}{% endfor %};
+    rewrite ^(.*) {{ protocol }}$host$1 permanent;
 }
 
 server {
@@ -24,27 +24,23 @@ server {
 {% else %}
     listen {{ standard_port }};
 {% endif %}
-
-    server_name {{ website.domain }};
+    server_name {{ website.domain }}{% for pre in website.prerelease %} {{ pre.domain }}{% endfor %};
 
     set $version 'release';
     if ($http_x_version) {
         set $version $http_x_version;
+    } 
+{% for pre in website.prerelease %}
+    if ($host = '{{ pre.domain }}') {
+        set $version '{{ pre.release }}';
     }
+{% endfor %}
 
     root   /var/www/{{ website.domain }}/$version/{{ website_webdir }};
 
     # Logging
     access_log  /var/log/nginx/{% if env != 'prod' %}{{ website.domain }}.{% endif %}access.log;
     error_log  /var/log/nginx/{% if env != 'prod' %}{{ website.domain }}.{% endif %}error.log {% if env != 'prod' %}debug{% else %}warn{% endif %};
-
-    # serve static files directly
-    location ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt)$ {
-{% if env == 'prod' %}
-        access_log        off;
-        expires           max;
-{% endif %}
-    }
 
     location / {
 {% if website.api is defined %}

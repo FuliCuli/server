@@ -3,12 +3,12 @@
 listen = /var/run/{{ website.domain }}.sock
 listen.backlog = -1
 listen.owner = nginx
-listen.group = www-data
+listen.group = {{ group }}
 listen.mode=0660
 
 ; Unix user/group of processes
-group = www-data
-user = {% if env == 'dev' %}vagrant{% else %}www-data{% endif %}
+user = {{ user }}
+group = {{ group }}
 
 
 ; Choose how the process manager will control the number of child processes.
