@@ -2,5 +2,5 @@
 
 - include: ../../iptables/handlers/main.yml
 
-- name: Restart mariadb
+- name: restart mariadb
   command: service mysql restart
