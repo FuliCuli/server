@@ -1,0 +1,19 @@
+---
+
+- name: Install cronjobs
+  cron: job="{{ item.prefix|default('') }}{{ website_dir }}/release/{{ item.job }} > {{ item.out|default('/dev/null 2>&1') }}"
+        minute="{{ item.minute|default('*')}}"
+        hour="{{ item.hour|default('*')}}"
+        day="{{ item.day|default('*')}}"
+        month="{{ item.month|default('*')}}"
+        weekday="{{ item.weekday|default('*')}}"
+        state="{{ item.day|default('present')}}"
+        user="{{ item.day|default(user)}}"
+        special_time="{{ item.day|default(null)}}"
+        reboot="{{ item.day|default('no')}}"
+        name="{{ website.domain }} {{ item.job }}"
+  with_items: website.cron
+  when: website.cron is defined
+  tags:
+    - website
+    - cron

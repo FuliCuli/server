@@ -1,0 +1,20 @@
+---
+
+user: www-data
+group: www-data
+
+ssl_port: 443
+standard_port: 80
+
+ssl_directory:
+    cert: "/etc/ssl/certs/"
+    key: "/etc/ssl/private/"
+
+protocol: "http://"
+redirect_protocol: "https://"
+ssl: false
+
+web_directory: /var/www/
+web_index: "index.php"
+
+release: release

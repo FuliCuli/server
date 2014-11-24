@@ -1,0 +1,80 @@
+---
+
+- name: Start new deployment
+  debug: msg="{{ website }}"
+  tags:
+    - website
+
+- name: Define variables for dev environment
+  set_fact: 
+    user: "vagrant"
+    group: "vagrant"
+  when: env == 'dev'
+  tags:
+    - website
+
+- name: Define variables for other environments
+  set_fact: 
+    user: "{{ website.user|default(user) }}"
+  when: env != 'dev'
+  tags:
+    - website
+
+- name: Define other variables
+  set_fact: 
+    website_dir: "{{ web_directory }}{{ website.domain }}"
+    version: "{{ website.version | default('master') }}"
+    type: "{{ website.type|default('other') }}"
+    website_webdir: "{{ website.web_dir | default('web') }}"
+    port: "{{ standard_port }}"
+    redirect_port: "{{ ssl_port }}"
+  tags:
+    - website
+
+- name: Define secure protocol
+  set_fact:
+    protocol: "https//"
+    redirect_protocol: "http://" 
+    ssl: true
+    port: "{{ ssl_port }}"
+    redirect_port: "{{ standard_port }}"
+  when: website.ssl
+  tags:
+    - website
+
+- name: Define custom web index
+  set_fact:
+    web_index: "{{ website.web_index }}"
+  when: website.web_index is defined
+  tags:
+    - website
+
+- name: Define generic ssl cert files
+  set_fact:
+    ssl_key_file: "{{ ssl_directory.cert }}{{ generic_ssl.key }}"
+  when: generic_ssl.key is defined
+  tags:
+    - website
+
+- name: Define standalone ssl cert files
+  set_fact:
+    ssl_cert_file: "{{ ssl_directory.cert }}{{ website.ssl.cert }}"
+  when: website.ssl.cert is defined
+  tags:
+    - website
+
+- name: Define generic ssl key files
+  set_fact:
+    ssl_cert_file: "{{ ssl_directory.key }}{{ generic_ssl.key }}"
+  when: generic_ssl.key is defined
+  tags:
+    - website
+
+- name: Define standalone ssl key files
+  set_fact:
+    ssl_key_file: "{{ ssl_directory.key }}{{ website.ssl.key }}"
+  when: website.ssl.key is defined
+  tags:
+    - website
+
+- include: symfony/init.yml

@@ -4,3 +4,8 @@
   apt: name=git state=latest update_cache=true
   tags:
     - git
+
+- name: Prevent against firewalls/proxies security
+  shell: git config --global url."https://".insteadOf git://
+  tags:
+    - git

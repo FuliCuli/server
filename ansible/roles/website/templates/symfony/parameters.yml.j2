@@ -1,0 +1,9 @@
+parameters:
+{% if website.params is defined %}
+{% for key,value in website.params.items() %}
+    {% if key != 'secret' %}{{ key }}: {{ value|default('~') }}{% endif %}
+
+{% endfor %}
+{% endif %}
+
+    secret: {{ symfony_secret_token.stdout }}

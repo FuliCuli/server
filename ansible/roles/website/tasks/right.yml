@@ -1,0 +1,6 @@
+---
+
+- name: Apply rights
+  shell: cd {{ website_dir }} && chmod -R 775 {{ version }}/ && chown -R {{ user }}:{{ group }} {{ version }}/
+  tags:
+    - website

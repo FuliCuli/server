@@ -1,0 +1,15 @@
+---
+
+- name: Create directories
+  file: dest={{ website_dir }}/.common/{{ item }} owner={{ user }} group={{ group }} mode=0775 state=directory
+  with_items: website.common.dir
+  when: website.common.dir is defined
+  tags:
+    - website
+
+- name: Create symlink
+  file: src={{ website_dir }}/.common/{{ item.src }} dest={{ website_dir }}/{{ version }}/{{ item.dest }} owner={{ user }} group={{ group }} force=yes state=link
+  with_items: website.common.symlink
+  when: website.common.symlink is defined
+  tags:
+    - website

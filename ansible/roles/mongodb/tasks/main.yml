@@ -22,16 +22,16 @@
     - mongodb
 
 - name: insert iptables input rule
-  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ mongodb_port }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ mongodb_port }} -m state --state NEW,ESTABLISHED -j ACCEPT'"
-  when: db_open_port
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ mongodb.port }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ mongodb.port }} -m state --state NEW,ESTABLISHED -j ACCEPT'"
+  when: mongodb.open
   notify: restart firewall
   tags:
     - mongodb
     - firewall
 
 - name: insert iptables output rule
-  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ mongodb_port }}' insertafter='# CUSTOM RULES HERE' line='-A OUTPUT -p tcp --source-port {{ mongodb_port }} -m state --state ESTABLISHED -j ACCEPT'"
-  when: db_open_port
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ mongodb.port }}' insertafter='# CUSTOM RULES HERE' line='-A OUTPUT -p tcp --source-port {{ mongodb.port }} -m state --state ESTABLISHED -j ACCEPT'"
+  when: mongodb.open
   notify: restart firewall
   tags:
     - mongodb

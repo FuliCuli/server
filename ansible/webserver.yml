@@ -11,6 +11,7 @@
     - php
     - nginx
     - rabbitmq
+    - { role: samba, when: "env == 'dev'" }
 
 - name: Install elasticsearch
   hosts: webserver
@@ -18,7 +19,6 @@
   sudo: yes
 
   roles:
-    - java
     - elasticsearch
 
 - name: Tools to build applications
@@ -27,6 +27,17 @@
   sudo: yes
 
   roles:
+    - composer
     - nodejs
     - grunt
     - bower
+    - { role: yeoman, when: "env == 'dev'" }
+
+- name: Install websites
+  hosts: webserver
+  user: vagrant
+  sudo: yes
+
+  roles:
+    - { role: website, tags: ["website", "api"], website: "{{ websites['api'] }}" }
+    - { role: website, tags: ["website", "fuliculi"], website: "{{ websites['fuliculi'] }}" }

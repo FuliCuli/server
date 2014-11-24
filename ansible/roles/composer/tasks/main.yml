@@ -1,0 +1,11 @@
+---
+
+- name: Install composer
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  tags:
+    - composer
+
+- name: Make composer executable
+  shell: chmod a+x /usr/local/bin/composer
+  tags: 
+    - composer

@@ -1,0 +1,35 @@
+---
+
+- name: Add group
+  group: name={{ group }} state=present
+  tags:
+    - website
+
+- name: Add user
+  user: name={{ user }} group={{ group }} state=present createhome=no
+  tags:
+    - website
+
+- name: Add nginx host files
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ website.domain }}.conf owner=root mode=644
+  notify: restart nginx
+  tags:
+    - website
+
+- name: Add php-fpm pool files
+  template: src=php-fpm.conf.j2 dest=/etc/php5/fpm/pool.d/{{ website.domain }}.conf owner=root mode=644
+  notify: restart php-fpm
+  tags:
+    - website
+
+- name: Copy ssl cert file
+  copy: src=../../../ssl/{{ website.ssl.cert }} dest={{ ssl_directory.cert }}{{ website.ssl.cert }}
+  when: website.ssl.cert is defined
+  tags:
+    - website
+
+- name: Copy ssl key file
+  copy: src=../../../ssl/{{ website.ssl.key }} dest={{ ssl_directory.key }}{{ website.ssl.key }}
+  when: website.ssl.key is defined
+  tags:
+    - website

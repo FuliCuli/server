@@ -1,0 +1,17 @@
+---
+
+env: dev
+
+mariadb:
+    open: true
+
+websites:
+    fuliculi:
+        domain: fuliculi.dev
+        alternative_domain:
+            - www.fuliculi.dev
+        ssl: false
+    api:
+        domain: api.dev
+        ssl: false
+        version: acd7d089093fc33aa30e4a0e02d09257acb653c2

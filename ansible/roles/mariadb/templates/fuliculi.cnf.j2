@@ -10,11 +10,11 @@
 
 # this is only for the mysqld standalone daemon
 [mysqld]
-port={{ db_port }}
+port={{ mariadb.port }}
 character_set_server   = utf8
 collation_server       = utf8_general_ci
 
-{% if not db_open_port %}
+{% if not mariadb.open %}
 bind-address=localhost
 {% endif %}
 

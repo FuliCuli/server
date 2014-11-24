@@ -1,0 +1,18 @@
+---
+
+- name: Launch custom symfony command
+  command: "{{ item }} chdir={{ website_dir }}/{{ version }}/{{ website_extradir }}"
+  with_items: website.symfony.command
+  when: website.symfony.command is defined
+  tags:
+    - website
+    - symfony
+
+- name: Clear symfony cache
+  shell: "sudo php app/console cache:clear --env={{ env }} chdir={{ website_dir }}/{{ version }}"
+  notify: restart php-fpm
+  tags:
+    - website
+    - symfony
+
+- include: ../right.yml

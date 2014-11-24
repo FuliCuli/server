@@ -1,0 +1,20 @@
+---
+
+- name: Check if web directory exists
+  stat: path={{ website_dir }}/{{ version }}/{{ website_webdir }}
+  register: check_web_path
+  tags:
+    - website
+
+- name: Create version file
+  template: src=version.txt.j2 dest={{ website_dir }}/{{ version }}/{{ website_webdir }}/version.txt owner={{ user }} group={{ group }}
+  when: check_web_path.stat.exists == true
+  tags:
+    - website
+
+- name: Change release folder
+  file: src={{ website_dir }}/{{ version }} dest={{ website_dir }}/{{ release }} owner={{ user }} group={{ group }} state=link
+  when: release != false
+  notify: restart php-fpm
+  tags:
+    - website

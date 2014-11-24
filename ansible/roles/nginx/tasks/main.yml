@@ -1,38 +1,48 @@
 ---
 
+- name: Add nginx key
+  apt_key: url=http://nginx.org/keys/nginx_signing.key state=present
+  tags:
+    - nginx
+
+- name: Add nginx repository
+  apt_repository: repo='deb http://nginx.org/packages/ubuntu trusty nginx'
+  tags:
+    - nginx
+
+- name: Add nginx repository
+  apt_repository: repo='deb-src http://nginx.org/packages/ubuntu trusty nginx' update_cache=yes
+  tags:
+    - nginx
+
 - name: Install nginx
   apt: name=nginx state=latest update_cache=true
   tags:
-    - webserver
     - nginx
 
-# - name: Create needed directories
-#   command: mkdir /etc/nginx/{{ item }}
-#   args:
-#     creates: /etc/nginx/{{ item }}
-#   with_items:
-#     - upstreams
-#     - locations
-#   tags:
-#     - webserver
-#     - nginx
-
 - name: Update nginx configuration
-  copy: src=fuliculi.conf dest=/etc/nginx/conf.d/fuliculi.conf
+  template: src=nginx.conf.j2 dest=/etc/nginx/conf.d/{{ item.key }}.conf
+  with_dict: nginx
   tags:
-    - webserver
+    - nginx
+
+- name: Config common ssl files
+  template: src=ssl.conf.j2 dest=/etc/nginx/conf.d/ssl.conf
+  when: ssl is defined
+  tags:
     - nginx
 
 - name: Define new default index file
   copy: src=default.html dest=/usr/share/nginx/html/index.html
   tags:
-    - webserver
     - nginx
 
-- name: insert iptables rule for httpd
-  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ httpd_port }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ httpd_port }} -j ACCEPT'"
+- name: "Insert iptables rule for http & https"
+  lineinfile: "dest=/etc/iptables.rules state=present regexp='{{ item }}' insertafter='# CUSTOM RULES HERE' line='-A INPUT -p tcp --dport {{ item }} -j ACCEPT'"
+  with_items:
+    - standard_port
+    - ssl_port
   tags:
-    - webserver
     - nginx
     - firewall
   notify: restart firewall
